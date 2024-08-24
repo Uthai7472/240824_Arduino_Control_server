@@ -10,7 +10,9 @@ app.use(cors({
 app.use(express.json());
 
 let commandLed = 'off';
+let lastArduinoValue = null;
 
+// Control LED
 app.post('/api/arduino-control', (req, res) => {
     commandLed = req.body.command;
     console.log(commandLed);
@@ -20,6 +22,17 @@ app.post('/api/arduino-control', (req, res) => {
 app.get('/api/arduino-control', (req, res) => {
     res.json({ commandLed });
 });
+
+// Monitor data from arduino controller
+app.post('/api/arduino-data', (req, res) => {
+    lastArduinoValue = req.body.randomValue;
+    console.log(`Received random value: ${lastArduinoValue}`);
+    res.send(`Random value received: ${lastArduinoValue}`);
+});
+
+app.get('/api/arduino-data', (req, res) => {
+    res.json({ randomValue: lastArduinoValue });
+})
 
 
 app.listen(port, () => {
